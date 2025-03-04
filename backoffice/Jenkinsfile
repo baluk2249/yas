@@ -1,0 +1,21 @@
+pipeline{
+    agent docker
+
+    stages {
+        stage('checkout')
+        {
+            steps {
+                git 'https://github.com/baluk2249/yas.git'
+            }
+        }
+        stage('build')
+        {
+            agent docker{
+                image 'maven:3.9.0-openjdk-21'
+            }
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+    }
+}

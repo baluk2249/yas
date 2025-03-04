@@ -1,3 +1,9 @@
-FROM eclipse-temurin:21-jre-alpine
-COPY target/cart*.jar app.jar
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+FROM alpine:latest
+COPY ../../yas/pom.xml /yas/pom.xml
+COPY pom.xml /yas/cart/pom.xml
+COPY src /yas/cart/src
+COPY .mvn /yas/cart/.mvn
+COPY mvnw /yas/cart/mvnw
+RUN chmod +x /yas/cart/mvnw
+
+
