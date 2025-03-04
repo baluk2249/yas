@@ -3,8 +3,9 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                sh 'mvn clean package -pl cart -am'
-                sh 'ls -l cart/target' 
+                sh 'mvn clean package '
+                sh 'apps=$(ls -d */)'
+                sh 'for app in $apps; do echo $app ; ls $app/target ; done' 
             }
         }
     }
