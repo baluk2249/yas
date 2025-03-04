@@ -1,14 +1,11 @@
-pipeline{
+pipeline {
     agent any
     stages {
-        stage('checkout')
-        {
+        stage('Build') { 
+            steps {
+                sh 'mvn clean package -pl cart -am'
+                sh 'ls -l cart/target' 
+            }
         }
-    stage('Build and Test'){
-        steps {
-            sh 'mvn clean package install -pl cart -am'
-            sh 'ls -l cart/target'
-        }
-    }
     }
 }
