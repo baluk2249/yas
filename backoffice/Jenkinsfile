@@ -2,14 +2,16 @@ pipeline {
     agent any
     stages {
         stage('Build') { 
-            steps {
-                sh 'cd backoffice'
+            steps
+            { dir('backoffice') {
+                
                 sh 'npm ci'
                 sh 'npm run build'
                 sh 'npm run lint'
                 sh 'npm prettier --check'
                 sh 'npm audit --omit=dev'
                  
+            }
             }
         }
     }
