@@ -3,9 +3,9 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                sh 'mvn clean package '
+                #sh 'mvn clean package '
                 sh 'apps=$(ls -d */)'
-                sh 'for app in $apps; do echo $app ; ls $app/target ; done' 
+                sh 'for app in $apps; do echo $app ; ls $app"target" ; done' 
             }
         }
     }
