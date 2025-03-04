@@ -1,20 +1,15 @@
-pipeline{
-    agent docker
-
+pipeline {
+    agent any
     stages {
-        stage('checkout')
-        {
+        stage('Build') { 
             steps {
-                git 'https://github.com/baluk2249/yas.git'
-            }
-        }
-        stage('build')
-        {
-            agent docker{
-                image 'maven:3.9.0-openjdk-21'
-            }
-            steps {
-                sh 'mvn clean package'
+                sh 'cd backoffice'
+                sh 'npm ci'
+                sh 'npm run build'
+                sh 'npm run lint'
+                sh 'npm prettier --check'
+                sh 'npm audit --omit=dev'
+                 
             }
         }
     }
