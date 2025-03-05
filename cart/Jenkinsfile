@@ -8,8 +8,10 @@ pipeline{
             }
         }
         stage('Scan'){
-            withSonarQubeEnv(installationName: 'sq') {
+            steps{
+                withSonarQubeEnv(installationName: 'sq') {
                 sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -pl cart -am'
+            }
             }
         }
     }
