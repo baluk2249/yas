@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+        MAVEN_OPTS = '-Dmaven.repo.local=.m2/repository'
+    }
     stages {
         
         stage('Build') {
@@ -61,6 +64,12 @@ pipeline {
                     }
                 }
             }
+        }
+    }
+    post {
+        always {
+            // Clean up the workspace after the build
+            cleanWs()
         }
     }
 
