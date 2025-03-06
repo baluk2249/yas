@@ -31,7 +31,7 @@ pipeline {
         }
         stage('OWASP Dependency-Check') {
             steps {
-                sh 'mvn org.owasp:dependency-check-maven:6.0.2:check -pl cart -am'
+                sh 'mvn org.owasp:dependency-check-maven:12.0.0:check -pl cart -am'
                 recordIssues(tools: [dependencyCheck(pattern: 'cart/dependency-check-report.xml')])
             }
         }
