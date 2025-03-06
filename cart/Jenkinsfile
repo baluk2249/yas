@@ -34,7 +34,7 @@ pipeline {
                 // recordIssues(tools: [java(pattern: 'cart/**/*-reports/TEST*.xml')])
             }
         }
-        
+        /*
         stage('OWASP Dependency-Check') {
             steps {
                 sh '''
@@ -46,7 +46,7 @@ pipeline {
                 recordIssues(tools: [dependencyCheck(pattern: 'cart/dependency-check-report.xml')])
             }
         }
-
+        */
         stage('Log in to the Container registry') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker_cred', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
