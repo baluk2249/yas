@@ -46,6 +46,16 @@ pipeline {
             }
         }
         */
+        stage('OWASP Dependency'){
+            steps{
+                dependencyCheck additionalArguments: '''
+                 -- scan 'cart' --format 'ALL' --project 'cart' --out 'cart/dependency-check-report.xml'
+                ''' , odcInstallation: 'OWASP'
+                dependencyCheckPublisher pattern: 'cart/dependency-check-report.xml'
+                recordIssues(tools: [dependencyCheck(pattern: 'cart/dependency-check-report.xml')])
+
+            }
+        }
 
         stage('Log in to the Container registry') {
             steps {
