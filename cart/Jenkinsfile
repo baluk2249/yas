@@ -17,10 +17,15 @@ pipeline {
         }
         */
         
-        stage('Run maven checkstyle') {
+        stage('Run maven checkstyle and record issues') {
             steps {
-                // sh 'mvn checkstyle:checkstyle -pl cart -am -Dcheckstyle.output.file=cart-checkstyle-result.xml'
+                sh 'mvn checkstyle:checkstyle -pl cart -am -Dcheckstyle.output.file=cart-checkstyle-result.xml'
                 recordIssues(tools: [checkStyle(pattern: '**/cart-checkstyle-result.xml')])
+            }
+        }
+        stage('test') {
+            steps {
+                junit 'cart/**/*-reports/TEST*.xml'
             }
         }
     }
