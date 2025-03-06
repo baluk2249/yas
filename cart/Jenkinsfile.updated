@@ -1,0 +1,115 @@
+pipeline {
+    agent any
+    environment {
+        MAVEN_OPTS = '-Dmaven.repo.local=.m2/repository'
+        FROM_ORIGINAL_REPOSITORY = "${env.CHANGE_URL ? env.CHANGE_URL.contains(env.JOB_NAME) : env.BRANCH_NAME == 'main'}"
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'mvn clean install -pl cart -am'
+            }
+        }
+
+        stage('Run Maven Checkstyle') {
+            when {
+                expression { return env.FROM_ORIGINAL_REPOSITORY == 'true' }
+            }
+            steps {
+                sh 'mvn checkstyle:checkstyle -pl cart -am -Dcheckstyle.output.file=cart-checkstyle-result.xml'
+            }
+        }
+
+        stage('Upload Checkstyle Result') {
+            when {
+                expression { return env.FROM_ORIGINAL_REPOSITORY == 'true' }
+            }
+            steps {
+                archiveArtifacts artifacts: '**/cart-checkstyle-result.xml', allowEmptyArchive: true
+            }
+        }
+
+        stage('Test Results') {
+            when {
+                expression { return env.FROM_ORIGINAL_REPOSITORY == 'true' && (currentBuild.result == 'SUCCESS' || currentBuild.result == 'FAILURE') }
+            }
+            steps {
+                junit 'cart/**/*-reports/TEST*.xml'
+            }
+        }
+
+        stage('OWASP Dependency Check') {
+            when {
+                expression { return env.FROM_ORIGINAL_REPOSITORY == 'true' }
+            }
+            steps {
+                sh '''
+                mvn org.owasp:dependency-check-maven:8.0.0:check \
+                    -pl cart -am \
+                    -Ddependency-check.cache.directory=./dependency-check-cache \
+                    -Ddependency-check.data.directory=./dependency-check-data
+                '''
+                archiveArtifacts artifacts: '**/dependency-check-report.html', allowEmptyArchive: true
+            }
+        }
+
+        stage('Analyze with SonarQube') {
+            when {
+                expression { return env.FROM_ORIGINAL_REPOSITORY == 'true' }
+            }
+            environment {
+                SONAR_TOKEN = credentials('sonar_token')
+            }
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -pl cart -am'
+                }
+            }
+        }
+
+        stage('Add Coverage Report to PR') {
+            when {
+                expression { return env.FROM_ORIGINAL_REPOSITORY == 'true' }
+            }
+            steps {
+                jacoco execPattern: 'cart/target/site/jacoco/jacoco.xml'
+            }
+        }
+
+        stage('Log in to the Container registry') {
+            when {
+                branch 'main'
+            }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker_cred', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    sh 'docker login -u $USERNAME -p $PASSWORD ghcr.io'
+                }
+            }
+        }
+
+        stage('Build and Push Docker Images') {
+            when {
+                branch 'main'
+            }
+            steps {
+                script {
+                    dir('cart') {
+                        def dockerImage = docker.build("ghcr.io/nashtech-garage/yas-cart:${env.BUILD_NUMBER}")
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+    }
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}
