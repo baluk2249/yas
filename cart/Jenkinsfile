@@ -31,7 +31,12 @@ pipeline {
         }
         stage('OWASP Dependency-Check') {
             steps {
-                sh 'mvn org.owasp:dependency-check-maven:7.2.0:check -pl cart -am'
+                sh '''
+                mvn org.owasp:dependency-check-maven:7.2.0:check \
+                        -pl cart -am \
+                        -Ddependency-check.cache.directory=./dependency-check-cache \
+                        -Ddependency-check.data.directory=./dependency-check-data
+                '''
                 recordIssues(tools: [dependencyCheck(pattern: 'cart/dependency-check-report.xml')])
             }
         }
