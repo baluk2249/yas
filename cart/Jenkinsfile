@@ -53,8 +53,11 @@ pipeline {
         stage('Build Docker image') {
             steps {
                 script {
-                    def dockerImage = docker.build("baluk2249/cart:${env.BUILD_NUMBER}")
+                    dir('cart'){
+                        def dockerImage = docker.build("baluk2249/cart:${env.BUILD_NUMBER}")
                     dockerImage.push()
+                    
+                    }
                 }
             }
         }
