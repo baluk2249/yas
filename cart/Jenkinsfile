@@ -7,7 +7,7 @@ pipeline {
                 sh 'mvn clean install -pl cart -am'
             }
         }
-        /*
+
         stage('Scan') {
             steps {
                 withSonarQubeEnv(installationName: 'sq') {
@@ -16,7 +16,7 @@ pipeline {
             }
         }
         
-        */
+
         stage('Run maven checkstyle and record issues') {
             steps {
                 sh 'mvn checkstyle:checkstyle -pl cart -am -Dcheckstyle.output.file=cart-checkstyle-result.xml'
@@ -30,7 +30,7 @@ pipeline {
                 // recordIssues(tools: [java(pattern: 'cart/**/*-reports/TEST*.xml')])
             }
         }
-        /*
+        
         stage('OWASP Dependency-Check') {
             steps {
                 sh '''
@@ -42,7 +42,7 @@ pipeline {
                 recordIssues(tools: [dependencyCheck(pattern: 'cart/dependency-check-report.xml')])
             }
         }
-        */
+
         stage('Log in to the Container registry') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker_cred', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
