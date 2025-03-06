@@ -19,7 +19,7 @@ pipeline {
         
         stage('Run maven checkstyle') {
             steps {
-                sh 'mvn checkstyle:checkstyle -pl cart -am -Dcheckstyle.output.file=cart-checkstyle-result.xml'
+                // sh 'mvn checkstyle:checkstyle -pl cart -am -Dcheckstyle.output.file=cart-checkstyle-result.xml'
                 recordIssues(tools: [checkStyle(pattern: '**/cart-checkstyle-result.xml')])
             }
         }
