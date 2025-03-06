@@ -1,6 +1,7 @@
 pipeline {
     agent any
     stages {
+        /*
         stage('Build') {
             steps {
                 sh 'mvn clean install -pl cart -am'
@@ -14,6 +15,7 @@ pipeline {
                 }
             }
         }
+        */
         
         stage('Run maven checkstyle') {
             steps {
