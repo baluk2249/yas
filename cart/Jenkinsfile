@@ -18,9 +18,7 @@ pipeline{
         stage('Run maven checkstyle'){
             steps{
                 sh 'mvn checkstyle:checkstyle -pl cart -am -Dcheckstyle.output.file=cart-checkstyle-result.xml'
-                warnings(pattern: 'cart-checkstyle-result.xml',
-                consoleLog: true,
-                failOnError: true)
+                warnings(pattern: 'cart-checkstyle-result.xml',consoleLog: true,failOnError: true)
             }
         }
         
