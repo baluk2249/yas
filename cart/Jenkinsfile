@@ -32,7 +32,7 @@ pipeline {
         stage('OWASP Dependency-Check') {
             steps {
                 sh '''
-                mvn org.owasp:dependency-check-maven:7.2.0:check \
+                mvn org.owasp:dependency-check-maven:12.0.0:check \
                         -pl cart -am \
                         -Ddependency-check.cache.directory=./dependency-check-cache \
                         -Ddependency-check.data.directory=./dependency-check-data
