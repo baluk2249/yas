@@ -1,27 +1,25 @@
-pipeline{
+pipeline {
     agent any
-    stages{
-        
-        stage('Build'){
-            steps{
-                sh 'mvn clean install -pl cart -am'  
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn clean install -pl cart -am'
             }
         }
         
-        stage('Scan'){
-            steps{
+        stage('Scan') {
+            steps {
                 withSonarQubeEnv(installationName: 'sq') {
-                sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -pl cart -am'
-            }
-            }
-        }
-        stage('Run maven checkstyle'){
-            steps{
-                sh 'mvn checkstyle:checkstyle -pl cart -am -Dcheckstyle.output.file=cart-checkstyle-result.xml'
-                warnings(pattern: 'cart-checkstyle-result.xml',consoleLog: true,failOnError: true)
+                    sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -pl cart -am'
+                }
             }
         }
         
+        stage('Run maven checkstyle') {
+            steps {
+                sh 'mvn checkstyle:checkstyle -pl cart -am -Dcheckstyle.output.file=cart-checkstyle-result.xml'
+                warnings(pattern: 'cart-checkstyle-result.xml', consoleLog: true, failOnError: true)
+            }
         }
     }
 }
