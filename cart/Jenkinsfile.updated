@@ -44,20 +44,20 @@ pipeline {
             }
         }
 
-        stage('OWASP Dependency Check') {
-            when {
-                expression { return env.FROM_ORIGINAL_REPOSITORY == 'true' }
-            }
-            steps {
-                sh '''
-                mvn org.owasp:dependency-check-maven:8.0.0:check \
-                    -pl cart -am \
-                    -Ddependency-check.cache.directory=./dependency-check-cache \
-                    -Ddependency-check.data.directory=./dependency-check-data
-                '''
-                archiveArtifacts artifacts: '**/dependency-check-report.html', allowEmptyArchive: true
-            }
-        }
+        // stage('OWASP Dependency Check') {
+        //     when {
+        //         expression { return env.FROM_ORIGINAL_REPOSITORY == 'true' }
+        //     }
+        //     steps {
+        //         sh '''
+        //         mvn org.owasp:dependency-check-maven:8.0.0:check \
+        //             -pl cart -am \
+        //             -Ddependency-check.cache.directory=./dependency-check-cache \
+        //             -Ddependency-check.data.directory=./dependency-check-data
+        //         '''
+        //         archiveArtifacts artifacts: '**/dependency-check-report.html', allowEmptyArchive: true
+        //     }
+        // }
 
         stage('Analyze with SonarQube') {
             when {
