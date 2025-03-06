@@ -26,7 +26,7 @@ pipeline {
         stage('test') {
             steps {
                 junit 'cart/**/*-reports/TEST*.xml'
-                recordIssues(tools: [java(pattern: 'cart/**/target/surefire-reports/TEST-*.xml')])
+                recordIssues(tools: [java(pattern: 'cart/target/**/TEST-*.xml')])
             }
         }
     }
