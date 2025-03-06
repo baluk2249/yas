@@ -4,8 +4,7 @@ pipeline{
         
         stage('Build'){
             steps{
-                sh 'mvn clean package -pl cart -am'
-                sh 'ls -l cart/target'  
+                sh 'mvn clean install -pl cart -am'  
             }
         }
         
@@ -14,6 +13,16 @@ pipeline{
                 withSonarQubeEnv(installationName: 'sq') {
                 sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -pl cart -am'
             }
+            }
+        }
+        stage('Run maven checkstyle'){
+            steps{
+                sh 'mvn checkstyle:checkstyle -pl cart -am -Dcheckstyle.output.file=cart-checkstyle-result.xml'
+            }
+        }
+        stage('Publish checkstyle results'){
+            steps{
+                publishCheckstyle pattern: 'cart-checkstyle-result.xml'
             }
         }
     }
